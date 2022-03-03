@@ -1,0 +1,5 @@
+API-Gateway/target/**
+Books-Service/target/**
+Centralized-Config-Server/target/**
+Eureka-Naming-Server/target/**
+Users-Service/target/**
