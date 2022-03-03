@@ -1,2 +1,4 @@
 # library-api-microservices-project
-spring boot library api with users and books micro-services
+Spring boot library api with users and books micro-services.
+
+API-gateway, Eureka naming server and centralized config server are also in this project which can be found in there respective folders.
