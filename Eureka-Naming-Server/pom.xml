@@ -11,7 +11,7 @@
 	<groupId>com.aks</groupId>
 	<artifactId>Eureka-Naming-Server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Eureka-Naming-Server</name>
+	<name>eureka-naming-server</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -60,6 +60,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>aks01/${project.name}:${project.version}</name>
+					</image>
+					<pullPolicy>IF_NOT_PRESENT</pullPolicy>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

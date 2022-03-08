@@ -1,0 +1,91 @@
+version: '3.7'
+services:
+  naming-server:
+    image: aks01/eureka-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - api-network
+    environment:
+      SPRING.CONFIG.IMPORT: configserver:http://centralized-config-server:8888
+  
+  api-gateway:
+    image: aks01/api-gateway:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8765:8765"
+    networks:
+      - api-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      SPRING.CONFIG.IMPORT: configserver:http://centralized-config-server:8888
+      EUREKA.CLIENT.SERVICE-URL.DEFAULTZONE: http://naming-server:8761/eureka
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+  
+  users-service:
+    image: aks01/users-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8001:8001"
+    networks:
+      - api-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      SPRING.CONFIG.IMPORT: configserver:http://centralized-config-server:8888
+      EUREKA.CLIENT.SERVICE-URL.DEFAULTZONE: http://naming-server:8761/eureka
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+  books-service:
+    image: aks01/books-service:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8101:8101"
+    networks:
+      - api-network
+    depends_on:
+      - naming-server
+      - rabbitmq
+    environment:
+      SPRING.CONFIG.IMPORT: configserver:http://centralized-config-server:8888
+      EUREKA.CLIENT.SERVICE-URL.DEFAULTZONE: http://naming-server:8761/eureka
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+
+  zipkin-server:
+    image: openzipkin/zipkin:latest
+    mem_limit: 300m
+    ports:
+      - "9411:9411"
+    networks:
+      - api-network
+    depends_on:
+      - rabbitmq
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:latest
+    mem_limit: 300m
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - api-network
+
+networks:
+  api-network:
+    driver: bridge

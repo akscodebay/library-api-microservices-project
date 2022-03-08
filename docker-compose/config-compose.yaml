@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  centralized-config-server:
+    image: aks01/centralized-config-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8888:8888"
+    networks:
+      - api-network
+
+networks:
+  api-network:
+    driver: bridge
