@@ -24,6 +24,13 @@ public class CustomResponseHandler extends ResponseEntityExceptionHandler{
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@ExceptionHandler({feign.FeignException.ServiceUnavailable.class})
+	public final ResponseEntity<Object> handleIFeignServiceUnavailableException(Exception ex, WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), 
+				ex.getMessage(), request.getDescription(false));
+		return new ResponseEntity<>(exceptionResponse, HttpStatus.SERVICE_UNAVAILABLE);
+	}
+	
 	@ExceptionHandler({IllegalArgumentException.class, MethodArgumentTypeMismatchException.class})
 	public final ResponseEntity<Object> handleIllegalArgumentException(Exception ex, WebRequest request) {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDateTime.now(), 
@@ -38,6 +45,6 @@ public class CustomResponseHandler extends ResponseEntityExceptionHandler{
 				ex.getBindingResult().getFieldError().getDefaultMessage().toString(), request.getDescription(false));
 		return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
-
+	
 
 }
